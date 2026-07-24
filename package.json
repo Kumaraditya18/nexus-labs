@@ -1,0 +1,37 @@
+{
+  "name": "nexus-labs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/three": "^0.185.1",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.26.0",
+    "next": "16.2.11",
+    "pg": "^8.22.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.6.0",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@eslint/plugin-kit": "^0.7.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.2.11",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
