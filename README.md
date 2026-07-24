@@ -27,7 +27,6 @@ The application blends GTA VI kinetic 3D scroll storytelling, spatial audio synt
 ### 2. 🗄️ Production Neon PostgreSQL Cloud Integration (`src/lib/db.ts`)
 - **Automated Schema & Seeding**: Tables `users`, `products`, and `orders` automatically initialize on startup.
 - Pre-seeded with 14 reference hardware devices (Pulse ANC, Vision 32" OLED, Keystone Keyboard, Book Pro 16).
-- Connected to Neon cloud database: `ep-jolly-dew-ax17o252-pooler.c-4.us-east-2.aws.neon.tech`.
 
 ### 3. 👑 User Access Control & Admin Privilege Delegation (`/admin`)
 - Primary Admin (`kumaraditya1814@gmail.com`) receives direct access to the **Executive Command Center**.
@@ -65,7 +64,7 @@ Create a `.env.local` file in the root directory:
 
 ```env
 # Production Neon PostgreSQL Database Connection
-DATABASE_URL="postgresql://neondb_owner:npg_bT7AMD6wQRvd@ep-jolly-dew-ax17o252-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://username:password@ep-cool-cloud-12345.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 # Next.js Environment Mode
 NODE_ENV="production"
@@ -103,7 +102,7 @@ NODE_ENV="production"
 
 1. Import your GitHub repository: `Kumaraditya18/nexus-labs`.
 2. Set Environment Variable:
-   - `DATABASE_URL`: `postgresql://neondb_owner:npg_bT7AMD6wQRvd@ep-jolly-dew-ax17o252-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require`
+   - `DATABASE_URL`: `your_postgresql_connection_string`
 3. Click **Deploy**.
 
 ---
