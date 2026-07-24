@@ -1,15 +1,18 @@
 import { Pool } from 'pg';
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://amber@localhost:5432/nexus_db';
+const rawConnectionString = process.env.DATABASE_URL || 'postgresql://amber@localhost:5432/nexus_db';
 
-const isProduction = process.env.NODE_ENV === 'production';
+// Sanitize connection string SSL parameters for pg connection pool compatibility
+const sanitizedConnectionString = rawConnectionString.replace('sslmode=require', 'sslmode=verify-full');
+
+const isProduction = process.env.NODE_ENV === 'production' || rawConnectionString.includes('neon.tech');
 
 export const pool = new Pool({
-  connectionString,
+  connectionString: sanitizedConnectionString,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
-  ssl: isProduction && !connectionString.includes('localhost') ? { rejectUnauthorized: false } : false
+  ssl: isProduction && !rawConnectionString.includes('localhost') ? { rejectUnauthorized: false } : false
 });
 
 export async function initDb() {
@@ -70,8 +73,6 @@ export async function initDb() {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
-
-      console.log('PostgreSQL 18 tables initialized with primary admin kumaraditya1814@gmail.com.');
     } finally {
       client.release();
     }
