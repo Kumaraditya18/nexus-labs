@@ -30,11 +30,16 @@ export async function initDb() {
         );
       `);
 
-      // Ensure admin user exists
+      // Ensure primary admin user (kumaraditya1814@gmail.com) exists
       await client.query(`
         INSERT INTO users (id, email, name, password_hash, role, tier)
-        VALUES ('usr_admin', 'amber.vance@nexuslabs.tech', 'Amber Vance', 'admin123', 'admin', 'NEXUS Black Member')
-        ON CONFLICT (email) DO NOTHING;
+        VALUES ('usr_admin_kumar', 'kumaraditya1814@gmail.com', 'Kumar Aditya', 'admin123', 'admin', 'NEXUS Black Member')
+        ON CONFLICT (email) DO UPDATE SET role = 'admin', tier = 'NEXUS Black Member';
+      `);
+
+      // Demote legacy amber.vance if present
+      await client.query(`
+        UPDATE users SET role = 'user' WHERE email = 'amber.vance@nexuslabs.tech';
       `);
 
       // 2. Products Table
@@ -66,7 +71,7 @@ export async function initDb() {
         );
       `);
 
-      console.log('PostgreSQL 18 tables initialized successfully.');
+      console.log('PostgreSQL 18 tables initialized with primary admin kumaraditya1814@gmail.com.');
     } finally {
       client.release();
     }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { pool, initDb } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -11,14 +12,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const isAdmin = email.includes('admin') || email.includes('amber.vance');
+    await initDb();
+    const cleanEmail = email.trim().toLowerCase();
+    const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com';
+    const userId = `usr_${Math.floor(1000 + Math.random() * 9000)}`;
+    const userName = name || (isAdmin ? 'Kumar Aditya' : cleanEmail.split('@')[0]);
+    const userRole = isAdmin ? 'admin' : 'user';
+    const userTier = isAdmin ? 'NEXUS Black Member' : 'Pro';
+
+    try {
+      const client = await pool.connect();
+      try {
+        await client.query(
+          `INSERT INTO users (id, email, name, password_hash, role, tier)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name`,
+          [userId, cleanEmail, userName, password, userRole, userTier]
+        );
+      } finally {
+        client.release();
+      }
+    } catch (dbErr) {
+      console.warn('PostgreSQL Signup Warning:', dbErr);
+    }
 
     const dbUser = {
-      id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
-      email,
-      name: name || email.split('@')[0],
-      role: isAdmin ? 'admin' : 'user',
-      tier: isAdmin ? 'NEXUS Black Member' : 'Pro'
+      id: userId,
+      email: cleanEmail,
+      name: userName,
+      role: userRole,
+      tier: userTier
     };
 
     const response = NextResponse.json({
@@ -33,7 +56,7 @@ export async function POST(request: Request) {
       sameSite: 'lax'
     });
 
-    response.cookies.set('nexus_user_role', isAdmin ? 'admin' : 'user', {
+    response.cookies.set('nexus_user_role', dbUser.role, {
       path: '/',
       httpOnly: false,
       maxAge: 86400,
