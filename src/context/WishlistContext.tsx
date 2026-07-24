@@ -20,7 +20,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         // ignore
       }
     }
-    return ['pulse-anc', 'vision-oled-32'];
+    return [];
   });
 
   useEffect(() => {
