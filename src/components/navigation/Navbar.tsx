@@ -14,7 +14,10 @@ import {
   Sliders,
   Layers,
   LogOut,
-  Package
+  Package,
+  Menu,
+  X,
+  ChevronRight
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -35,13 +38,14 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
 
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const currencies: Currency[] = ['USD', 'EUR', 'GBP', 'JPY'];
   const isAdminUser = user?.role === 'admin' || user?.email?.toLowerCase() === 'kumaraditya1814@gmail.com';
   const totalCartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/80 backdrop-blur-xl border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/90 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
         {/* Brand Emblem Logo */}
         <Link href="/" onClick={playClick} className="flex items-center gap-3 group cursor-pointer">
@@ -58,7 +62,7 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
           </div>
         </Link>
 
-        {/* Primary Navigation Links */}
+        {/* Primary Desktop Navigation Links */}
         <nav className="hidden lg:flex items-center gap-8 text-xs font-mono tracking-wider uppercase text-zinc-400">
           <Link href="/products" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
             <Layers className="w-3.5 h-3.5 text-zinc-400" />
@@ -85,7 +89,7 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Natural Language Search Trigger */}
           <button
             onClick={() => {
@@ -169,13 +173,13 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
 
           {/* User Account / Admin Account Dropdown */}
           {user ? (
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border border-white/10 hover:border-white/30 transition-all cursor-pointer"
               >
                 <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover border border-white/20" />
-                <span className="text-xs font-mono text-white font-bold hidden sm:inline">{user.name.split(' ')[0]}</span>
+                <span className="text-xs font-mono text-white font-bold">{user.name.split(' ')[0]}</span>
               </button>
 
               <AnimatePresence>
@@ -238,13 +242,120 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
             <Link
               href="/login"
               onClick={playClick}
-              className="px-4 py-2 rounded-full glass-panel border border-white/10 hover:border-white/30 text-xs font-mono text-white transition-all cursor-pointer"
+              className="hidden sm:inline-flex px-4 py-2 rounded-full glass-panel border border-white/10 hover:border-white/30 text-xs font-mono text-white transition-all cursor-pointer"
             >
               Sign In
             </Link>
           )}
+
+          {/* MOBILE HAMBURGER TOGGLE BUTTON */}
+          <button
+            onClick={() => {
+              playClick();
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
+            className="p-2.5 rounded-full lg:hidden glass-panel border border-white/10 text-white cursor-pointer"
+            title="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* MOBILE SLIDE-DOWN DRAWER MENU */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-[#09090b] border-b border-white/10 px-6 py-6 space-y-4 font-mono text-xs overflow-hidden"
+          >
+            <div className="space-y-2">
+              <Link
+                href="/products"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
+              >
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-zinc-400" />
+                  <span>Ecosystem Catalog</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-500" />
+              </Link>
+
+              <Link
+                href="/workspace-builder"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-zinc-400" />
+                  <span>AI Workspace Builder</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-500" />
+              </Link>
+
+              <Link
+                href="/compare"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
+              >
+                <div className="flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-zinc-400" />
+                  <span>Spec Comparison Engine</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-zinc-500" />
+              </Link>
+
+              {isAdminUser && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white text-black font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <BarChart2 className="w-4 h-4 text-black" />
+                    <span>Admin Command Center</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-black" />
+                </Link>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+              {user ? (
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover border border-white/20" />
+                    <div>
+                      <div className="font-bold text-white">{user.name}</div>
+                      <div className="text-[10px] text-zinc-400">{user.email}</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                    className="px-3 py-1.5 rounded-xl border border-red-500/30 text-red-400 text-[10px] uppercase font-mono"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 rounded-xl bg-white text-black text-center font-bold uppercase"
+                >
+                  Sign In to NEXUS ID
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

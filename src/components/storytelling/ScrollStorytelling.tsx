@@ -60,72 +60,59 @@ export default function ScrollStorytelling() {
     return () => clearInterval(interval);
   }, [activeStage]);
 
-  const materialsList = [
-    { id: 'titanium', name: 'Aerospace Grade 5 Titanium', desc: '4x strength-to-weight ratio of standard steel.', color: '#94a3b8' },
-    { id: 'beryllium', name: 'Electrostatic Beryllium', desc: 'Sub-micron acoustic membrane with zero breakup distortion.', color: '#e2e8f0' },
-    { id: 'carbon', name: 'Woven Carbon Fiber', desc: 'Ultra-rigid dampening chassis eliminating acoustic resonance.', color: '#1e293b' },
-    { id: 'sapphire', name: 'Sapphire Crystal Glass', desc: '9 Mohs hardness transparent touch surface.', color: '#ffffff' }
-  ];
-
-  const stageTitles = ['Acoustics', 'Assembly', 'Materials', 'Spectrum', 'Customizer', 'Ecosystem'];
-
   return (
-    <section ref={containerRef} className="relative min-h-[500vh] bg-[#09090b]">
-      <motion.div
-        className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-zinc-950/80 to-[#09090b]"
-        style={{ opacity: bgOpacity }}
-      />
+    <section ref={containerRef} className="relative h-[450vh] bg-[#09090b]">
+      {/* Sticky Viewport Stage Container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 md:px-8">
+        
+        {/* Dynamic Background Glow Layer */}
+        <motion.div
+          style={{ opacity: bgOpacity }}
+          className="absolute inset-0 bg-radial-gradient pointer-events-none"
+        />
 
-      {/* Sticky Fullscreen Stage Viewport */}
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden z-10">
-        {/* Side Indicator Pill */}
-        <div className="absolute left-6 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col gap-3 glass-panel p-3 rounded-full border border-white/10">
-          {[1, 2, 3, 4, 5, 6].map((stage, idx) => (
-            <button
-              key={stage}
-              onClick={() => setActiveStage(stage)}
-              className={`w-3 h-3 rounded-full transition-all cursor-pointer ${
-                activeStage === stage ? 'bg-white scale-125' : 'bg-white/20 hover:bg-white/50'
+        {/* Ambient Stage Indicator */}
+        <div className="absolute top-24 left-4 md:left-8 z-30 flex items-center gap-2">
+          <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-mono text-[10px] uppercase font-bold tracking-widest shadow-lg">
+            Stage 0{activeStage} / 06
+          </div>
+        </div>
+
+        {/* Stage Progress Indicator Dots */}
+        <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-2">
+          {[1, 2, 3, 4, 5, 6].map((stg) => (
+            <div
+              key={stg}
+              className={`w-2 h-2 rounded-full transition-all ${
+                activeStage === stg ? 'bg-white scale-125 shadow-lg' : 'bg-white/20'
               }`}
-              title={stageTitles[idx]}
             />
           ))}
         </div>
 
-        {/* STAGE 1: ACOUSTIC ARCHITECTURE */}
+        {/* STAGE 1: HERO OVERVIEW */}
         {activeStage === 1 && (
           <motion.div
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-12"
+            className="w-full max-w-5xl mx-auto text-center space-y-6 z-20"
           >
-            <div className="space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-                <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Iconic Acoustic Architecture</span>
-              </div>
-              <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">
-                NEXUS <span className="text-gradient-subtle">Pulse ANC</span>
-              </h2>
-              <p className="text-zinc-300 text-lg font-light leading-relaxed">
-                Sculpted from translucent sapphire polycarbonate and electrostatic beryllium drivers. Delivering reference spatial audio that adapts to your ear canal in real time.
-              </p>
-              <div className="flex items-center gap-4 pt-4">
-                <button
-                  onClick={() => {
-                    playSuccess();
-                    addToCart(heroProduct);
-                  }}
-                  className="px-8 py-4 rounded-full bg-white text-black font-semibold text-xs tracking-wider uppercase hover:bg-zinc-200 transition-all flex items-center gap-2 cursor-pointer shadow-xl"
-                >
-                  <span>Pre-Order {formatPrice(heroProduct.price)}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Iconic Acoustic Architecture</span>
             </div>
 
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white tracking-tighter uppercase">
+              NEXUS <span className="text-gradient-subtle">Pulse ANC</span>
+            </h1>
+
+            <p className="text-zinc-300 text-xs sm:text-sm md:text-base font-light max-w-2xl mx-auto leading-relaxed">
+              Electrostatic beryllium driver wireless audio. Forged aerospace titanium housing. Ultra-low latency spatial telemetry.
+            </p>
+
+            {/* Kinetic 3D Product Stage */}
             <motion.div
               style={{
                 scale: productScale,
@@ -133,122 +120,161 @@ export default function ScrollStorytelling() {
                 rotateY: productRotateY,
                 y: productY
               }}
-              className="h-[450px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 relative bg-zinc-900 shadow-2xl group"
+              className="relative mx-auto h-[260px] sm:h-[340px] md:h-[400px] w-full max-w-2xl rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900/90 shadow-2xl p-4 flex items-center justify-center"
             >
-              <img src={heroProduct.image} alt={heroProduct.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-[10px] font-mono text-zinc-300 border border-white/10 uppercase">
-                Kinetic Frame Telemetry
+              <img
+                src={heroProduct.image}
+                alt={heroProduct.name}
+                className="w-full h-full object-cover rounded-2xl shadow-2xl"
+              />
+              <div className="absolute bottom-4 left-4 z-20 px-3 py-1 rounded-full bg-[#09090b]/90 border border-white/30 text-white font-mono text-[10px] uppercase font-bold tracking-widest shadow-xl backdrop-blur-md">
+                Beryllium Electrostatic Reference
               </div>
             </motion.div>
+
+            <div className="pt-2 flex justify-center gap-4">
+              <Link
+                href={`/products/${heroProduct.id}`}
+                onClick={playClick}
+                className="px-6 py-3 rounded-full bg-white text-black font-bold text-xs uppercase hover:bg-zinc-200 transition-colors shadow-lg cursor-pointer"
+              >
+                Inspect Device Spec
+              </Link>
+            </div>
           </motion.div>
         )}
 
         {/* STAGE 2: PRECISION ASSEMBLY */}
         {activeStage === 2 && (
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-12"
+            className="w-full max-w-5xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12"
           >
-            <motion.div
-              style={{ scale: productScale, rotateY: productRotateY }}
-              className="h-[450px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 relative bg-zinc-900 shadow-2xl"
-            >
-              <img src={heroProduct.image} alt={heroProduct.name} className="w-full h-full object-cover" />
-            </motion.div>
-
-            <div className="space-y-6 text-left">
+            <div className="space-y-4 md:space-y-6 text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
                 <Layers className="w-3.5 h-3.5 text-zinc-400" />
                 <span>Precision Assembly Matrix</span>
               </div>
-              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-                Sub-Millimeter <span className="text-gradient-subtle">Precision Engine</span>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
+                4,000-Ton <span className="text-gradient-subtle">Forged Titanium</span>
               </h2>
-              <p className="text-zinc-300 text-base font-light">
-                Micro-engineered layers display the A1 Neural DSP processing unit, dual neodymium ring magnet geometry, and electrostatic beryllium membrane assembly.
+
+              <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                Each casing is milled from a single block of Grade 5 Aerospace Titanium. Micro-polished to 0.01 micron tolerances for zero acoustic resonance.
               </p>
-              <div className="grid grid-cols-2 gap-4 font-mono text-xs text-zinc-300 pt-2">
-                <div className="p-3.5 rounded-2xl glass-card">
-                  <div className="text-white font-bold text-lg">48,000 Hz</div>
-                  <div>Neural Sampling Rate</div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2 font-mono text-xs">
+                <div className="p-3 rounded-xl glass-panel border border-white/10">
+                  <div className="text-zinc-500 uppercase text-[9px]">Tensile Strength</div>
+                  <div className="text-white font-bold text-sm">950 MPa</div>
                 </div>
-                <div className="p-3.5 rounded-2xl glass-card">
-                  <div className="text-white font-bold text-lg">-48 dB</div>
-                  <div>Active Noise Cancellation</div>
+                <div className="p-3 rounded-xl glass-panel border border-white/10">
+                  <div className="text-zinc-500 uppercase text-[9px]">Chassis Density</div>
+                  <div className="text-white font-bold text-sm">4.43 g/cm³</div>
                 </div>
               </div>
             </div>
+
+            <motion.div
+              style={{ scale: productScale }}
+              className="h-[260px] sm:h-[340px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80"
+                alt="Precision Assembly"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </motion.div>
         )}
 
-        {/* STAGE 3: MATERIAL SCIENCE */}
+        {/* STAGE 3: TACTILE MATERIAL SCIENCE */}
         {activeStage === 3 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-5xl mx-auto px-6 text-center space-y-8"
+            className="w-full max-w-5xl mx-auto px-4 md:px-6 text-center space-y-6"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
               <Sliders className="w-3.5 h-3.5 text-zinc-400" />
               <span>Tactile Material Science</span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-              Pure <span className="text-gradient-subtle">Material Mastery</span>
+            <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter">
+              Tactile <span className="text-gradient-subtle">Finish Engineering</span>
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {materialsList.map((m) => (
-                <div
-                  key={m.id}
-                  onClick={() => setSelectedMaterial(m.id)}
-                  className={`p-6 rounded-2xl glass-card text-left cursor-pointer transition-all border ${
-                    selectedMaterial === m.id ? 'border-white bg-white/10' : 'border-white/10'
+            <div className="flex justify-center gap-2 sm:gap-4 flex-wrap">
+              {['obsidian', 'titanium', 'sapphire'].map((mat) => (
+                <button
+                  key={mat}
+                  onClick={() => {
+                    playClick();
+                    setSelectedMaterial(mat);
+                  }}
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
+                    selectedMaterial === mat
+                      ? 'bg-white text-black font-bold shadow-lg'
+                      : 'glass-panel text-zinc-400 border border-white/10 hover:border-white/30'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full mb-4 border border-white/20" style={{ backgroundColor: m.color }} />
-                  <h4 className="font-bold text-white text-sm mb-1">{m.name}</h4>
-                  <p className="text-xs text-zinc-400 leading-snug">{m.desc}</p>
-                </div>
+                  {mat} Finish
+                </button>
               ))}
+            </div>
+
+            <div className="h-[240px] sm:h-[320px] md:h-[360px] w-full max-w-2xl mx-auto rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900 shadow-2xl p-2">
+              <img
+                src={
+                  selectedMaterial === 'obsidian'
+                    ? 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1000&q=80'
+                    : selectedMaterial === 'titanium'
+                    ? 'https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=1000&q=80'
+                    : 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1000&q=80'
+                }
+                alt={selectedMaterial}
+                className="w-full h-full object-cover rounded-2xl"
+              />
             </div>
           </motion.div>
         )}
 
-        {/* STAGE 4: WAVE SPECTRUM */}
+        {/* STAGE 4: ACOUSTIC WAVE SPECTRUM */}
         {activeStage === 4 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-4xl mx-auto px-6 text-center space-y-8"
+            className="w-full max-w-4xl mx-auto px-4 md:px-6 text-center space-y-6"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
               <Activity className="w-3.5 h-3.5 text-zinc-400" />
               <span>Acoustic Wave Spectrum</span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
-              Infinite <span className="text-gradient-subtle">Acoustic Clarity</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
+              10Hz – 45kHz <span className="text-gradient-subtle">Zero Distortion</span>
             </h2>
 
-            <div className="p-8 rounded-3xl glass-panel border border-white/10 flex items-end justify-center gap-3 h-48 shadow-2xl">
-              {audioFrequency.map((h, i) => (
+            {/* Live Audio Frequency Visualizer */}
+            <div className="flex justify-center items-end gap-1.5 md:gap-2 h-24 sm:h-28 p-4 rounded-2xl glass-panel border border-white/10">
+              {audioFrequency.map((val, idx) => (
                 <div
-                  key={i}
-                  className="w-4 rounded-full bg-gradient-to-t from-zinc-600 to-white transition-all duration-150"
-                  style={{ height: `${h}%` }}
+                  key={idx}
+                  style={{ height: `${val}%` }}
+                  className="w-3 sm:w-4 bg-white/80 rounded-t transition-all duration-150 shadow-md"
                 />
               ))}
             </div>
 
-            <div className="flex justify-center gap-8 font-mono text-xs text-zinc-400">
+            <div className="flex justify-center gap-4 sm:gap-8 font-mono text-[10px] sm:text-xs text-zinc-400">
               <div>Sub-Bass: <span className="text-white font-bold">10Hz - 60Hz</span></div>
               <div>Midrange: <span className="text-white font-bold">500Hz - 4kHz</span></div>
               <div>Treble: <span className="text-white font-bold">4kHz - 45kHz</span></div>
@@ -263,27 +289,27 @@ export default function ScrollStorytelling() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-12"
+            className="w-full max-w-5xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12"
           >
-            <div className="space-y-6 text-left">
+            <div className="space-y-4 sm:space-y-6 text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
                 <Zap className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Custom Hardware Configurator</span>
+                <span>Custom Configurator</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
                 Craft Your <span className="text-gradient-subtle">Specification</span>
               </h2>
-              <p className="text-zinc-300 text-sm">
+              <p className="text-zinc-300 text-xs sm:text-sm">
                 Select custom finish and optional laser engraving for personalized acoustic ownership.
               </p>
-              <div className="space-y-3 pt-2">
-                <div className="text-xs font-mono text-zinc-400 uppercase">Available Finishes</div>
-                <div className="flex gap-3">
+              <div className="space-y-2 pt-1">
+                <div className="text-[10px] sm:text-xs font-mono text-zinc-400 uppercase">Available Finishes</div>
+                <div className="flex flex-wrap gap-2">
                   {heroProduct.materials.map((mat) => (
                     <button
                       key={mat.id}
                       onClick={() => playClick()}
-                      className="px-4 py-2 rounded-xl glass-card border border-white/10 hover:border-white/30 text-xs text-white flex items-center gap-2 cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl glass-card border border-white/10 hover:border-white/30 text-xs text-white flex items-center gap-2 cursor-pointer"
                     >
                       <span className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: mat.colorHex }} />
                       <span>{mat.name}</span>
@@ -296,15 +322,15 @@ export default function ScrollStorytelling() {
                   playSuccess();
                   addToCart(heroProduct);
                 }}
-                className="w-full py-4 rounded-2xl bg-white text-black font-semibold text-xs uppercase hover:bg-zinc-200 transition-colors shadow-lg cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-white text-black font-semibold text-xs uppercase hover:bg-zinc-200 transition-colors shadow-lg cursor-pointer"
               >
-                Add Configured Device to Cart ({formatPrice(heroProduct.price)})
+                Add Configured Device ({formatPrice(heroProduct.price)})
               </button>
             </div>
 
             <motion.div
               style={{ scale: productScale }}
-              className="h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
+              className="h-[240px] sm:h-[320px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
             >
               <img src={heroProduct.image} alt={heroProduct.name} className="w-full h-full object-cover" />
             </motion.div>
@@ -318,28 +344,28 @@ export default function ScrollStorytelling() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-6xl mx-auto px-6 text-center space-y-8"
+            className="w-full max-w-6xl mx-auto px-4 md:px-6 text-center space-y-6 md:space-y-8"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
               <Cpu className="w-3.5 h-3.5 text-zinc-400" />
               <span>Unified Hardware Ecosystem</span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter">
               One Unified <span className="text-gradient-subtle">Design System</span>
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {PRODUCTS.slice(0, 4).map((prod) => (
                 <Link
                   key={prod.id}
                   href={`/products/${prod.id}`}
                   onClick={playClick}
-                  className="p-5 rounded-2xl glass-card text-left space-y-3 border border-white/10 hover:border-white/30 transition-all group cursor-pointer"
+                  className="p-4 sm:p-5 rounded-2xl glass-card text-left space-y-2 sm:space-y-3 border border-white/10 hover:border-white/30 transition-all group cursor-pointer"
                 >
-                  <img src={prod.image} alt={prod.name} className="w-12 h-12 rounded-xl object-cover border border-white/10" />
-                  <h4 className="font-bold text-white text-sm group-hover:text-zinc-300 transition-colors">{prod.name}</h4>
-                  <div className="text-xs font-mono text-zinc-300 font-bold">{formatPrice(prod.price)}</div>
+                  <img src={prod.image} alt={prod.name} className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover border border-white/10" />
+                  <h4 className="font-bold text-white text-xs sm:text-sm group-hover:text-zinc-300 transition-colors line-clamp-1">{prod.name}</h4>
+                  <div className="text-[10px] sm:text-xs font-mono text-zinc-300 font-bold">{formatPrice(prod.price)}</div>
                 </Link>
               ))}
             </div>
