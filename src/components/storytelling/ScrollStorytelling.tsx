@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, Layers, Sliders, Zap, ArrowRight, Cpu, Activity } from 'lucide-react';
+import { Zap, Activity, Cpu } from 'lucide-react';
 import { PRODUCTS } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -63,32 +63,13 @@ export default function ScrollStorytelling() {
   return (
     <section ref={containerRef} className="relative h-[450vh] bg-[#09090b]">
       {/* Sticky Viewport Stage Container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 md:px-8">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 pt-12 md:pt-16">
         
         {/* Dynamic Background Glow Layer */}
         <motion.div
           style={{ opacity: bgOpacity }}
           className="absolute inset-0 bg-radial-gradient pointer-events-none"
         />
-
-        {/* Ambient Stage Indicator */}
-        <div className="absolute top-24 left-4 md:left-8 z-30 flex items-center gap-2">
-          <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-mono text-[10px] uppercase font-bold tracking-widest shadow-lg">
-            Stage 0{activeStage} / 06
-          </div>
-        </div>
-
-        {/* Stage Progress Indicator Dots */}
-        <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-2">
-          {[1, 2, 3, 4, 5, 6].map((stg) => (
-            <div
-              key={stg}
-              className={`w-2 h-2 rounded-full transition-all ${
-                activeStage === stg ? 'bg-white scale-125 shadow-lg' : 'bg-white/20'
-              }`}
-            />
-          ))}
-        </div>
 
         {/* STAGE 1: HERO OVERVIEW */}
         {activeStage === 1 && (
@@ -97,13 +78,8 @@ export default function ScrollStorytelling() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-5xl mx-auto text-center space-y-6 z-20"
+            className="w-full max-w-5xl mx-auto text-center space-y-4 sm:space-y-6 z-20"
           >
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Iconic Acoustic Architecture</span>
-            </div>
-
             <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white tracking-tighter uppercase">
               NEXUS <span className="text-gradient-subtle">Pulse ANC</span>
             </h1>
@@ -120,16 +96,13 @@ export default function ScrollStorytelling() {
                 rotateY: productRotateY,
                 y: productY
               }}
-              className="relative mx-auto h-[260px] sm:h-[340px] md:h-[400px] w-full max-w-2xl rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900/90 shadow-2xl p-4 flex items-center justify-center"
+              className="relative mx-auto h-[240px] sm:h-[320px] md:h-[400px] w-full max-w-2xl rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900/90 shadow-2xl p-4 flex items-center justify-center"
             >
               <img
                 src={heroProduct.image}
                 alt={heroProduct.name}
                 className="w-full h-full object-cover rounded-2xl shadow-2xl"
               />
-              <div className="absolute bottom-4 left-4 z-20 px-3 py-1 rounded-full bg-[#09090b]/90 border border-white/30 text-white font-mono text-[10px] uppercase font-bold tracking-widest shadow-xl backdrop-blur-md">
-                Beryllium Electrostatic Reference
-              </div>
             </motion.div>
 
             <div className="pt-2 flex justify-center gap-4">
@@ -154,11 +127,6 @@ export default function ScrollStorytelling() {
             className="w-full max-w-5xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12"
           >
             <div className="space-y-4 md:space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-                <Layers className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Precision Assembly Matrix</span>
-              </div>
-
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
                 4,000-Ton <span className="text-gradient-subtle">Forged Titanium</span>
               </h2>
@@ -181,7 +149,7 @@ export default function ScrollStorytelling() {
 
             <motion.div
               style={{ scale: productScale }}
-              className="h-[260px] sm:h-[340px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
+              className="h-[240px] sm:h-[320px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
             >
               <img
                 src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1000&q=80"
@@ -201,11 +169,6 @@ export default function ScrollStorytelling() {
             transition={{ duration: 0.8 }}
             className="w-full max-w-5xl mx-auto px-4 md:px-6 text-center space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-              <Sliders className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Tactile Material Science</span>
-            </div>
-
             <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tighter">
               Tactile <span className="text-gradient-subtle">Finish Engineering</span>
             </h2>
@@ -229,7 +192,7 @@ export default function ScrollStorytelling() {
               ))}
             </div>
 
-            <div className="h-[240px] sm:h-[320px] md:h-[360px] w-full max-w-2xl mx-auto rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900 shadow-2xl p-2">
+            <div className="h-[220px] sm:h-[300px] md:h-[360px] w-full max-w-2xl mx-auto rounded-3xl overflow-hidden glass-panel border border-white/15 bg-zinc-900 shadow-2xl p-2">
               <img
                 src={
                   selectedMaterial === 'obsidian'
@@ -254,11 +217,6 @@ export default function ScrollStorytelling() {
             transition={{ duration: 0.8 }}
             className="w-full max-w-4xl mx-auto px-4 md:px-6 text-center space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-              <Activity className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Acoustic Wave Spectrum</span>
-            </div>
-
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
               10Hz – 45kHz <span className="text-gradient-subtle">Zero Distortion</span>
             </h2>
@@ -292,10 +250,6 @@ export default function ScrollStorytelling() {
             className="w-full max-w-5xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12"
           >
             <div className="space-y-4 sm:space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-                <Zap className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Custom Configurator</span>
-              </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tighter">
                 Craft Your <span className="text-gradient-subtle">Specification</span>
               </h2>
@@ -330,7 +284,7 @@ export default function ScrollStorytelling() {
 
             <motion.div
               style={{ scale: productScale }}
-              className="h-[240px] sm:h-[320px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
+              className="h-[220px] sm:h-[300px] md:h-[380px] w-full rounded-3xl overflow-hidden glass-panel border border-white/10 bg-zinc-900 shadow-2xl"
             >
               <img src={heroProduct.image} alt={heroProduct.name} className="w-full h-full object-cover" />
             </motion.div>
@@ -346,11 +300,6 @@ export default function ScrollStorytelling() {
             transition={{ duration: 0.8 }}
             className="w-full max-w-6xl mx-auto px-4 md:px-6 text-center space-y-6 md:space-y-8"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-              <Cpu className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Unified Hardware Ecosystem</span>
-            </div>
-
             <h2 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter">
               One Unified <span className="text-gradient-subtle">Design System</span>
             </h2>

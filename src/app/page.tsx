@@ -52,10 +52,10 @@ export default function HomePage() {
     <main className="min-h-screen bg-[#09090b] text-white">
       {/* 1. GTA VI STYLE KINETIC SCROLL STORYTELLING HERO */}
       <motion.div
-        initial={{ opacity: 0, scale: 1.1 }}
+        initial={{ opacity: 0, scale: 1.05 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className="pt-20"
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="pt-16 md:pt-20"
       >
         <ScrollStorytelling />
       </motion.div>
