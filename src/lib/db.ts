@@ -2,11 +2,14 @@ import { Pool } from 'pg';
 
 const connectionString = process.env.DATABASE_URL || 'postgresql://amber@localhost:5432/nexus_db';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const pool = new Pool({
   connectionString,
   max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 5000,
+  ssl: isProduction && !connectionString.includes('localhost') ? { rejectUnauthorized: false } : false
 });
 
 export async function initDb() {
