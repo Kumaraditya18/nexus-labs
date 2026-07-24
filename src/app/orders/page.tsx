@@ -2,153 +2,189 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Package, Search, ChevronRight } from 'lucide-react';
+import { Package, Search, ArrowRight, Truck, CheckCircle2, Clock, MapPin, Lock } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useAudioFx } from '@/context/AudioContext';
+import { useAuth } from '@/context/AuthContext';
 
-export const MOCK_ORDERS = [
-  {
-    id: 'ATH-892410',
-    date: 'July 24, 2026',
-    status: 'In Transit',
-    estimatedDelivery: 'July 26, 2026',
-    carrier: 'DHL Express Priority',
-    trackingCode: 'DHL-9941829410',
-    items: [
-      { name: 'NEXUS Pulse ANC (Obsidian Black)', price: 349, qty: 1, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80' },
-      { name: 'NEXUS Halo Ring (Titanium)', price: 299, qty: 1, image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=300&q=80' }
-    ],
-    total: 648,
-    timeline: [
-      { title: 'Order Verified & Authorized', date: 'Jul 24, 09:12 AM', completed: true },
-      { title: 'Sub-Millimeter Assembly', date: 'Jul 24, 11:45 AM', completed: true },
-      { title: 'Acoustic Chamber Inspection', date: 'Jul 24, 02:30 PM', completed: true },
-      { title: 'Dispatched via DHL Express', date: 'Jul 24, 05:00 PM', completed: true },
-      { title: 'Out for Regional Delivery', date: 'Est. Jul 26', completed: false }
-    ]
-  },
-  {
-    id: 'ATH-771842',
-    date: 'June 18, 2026',
-    status: 'Delivered',
-    estimatedDelivery: 'June 20, 2026',
-    carrier: 'FedEx Priority Global',
-    trackingCode: 'FDX-8821941019',
-    items: [
-      { name: 'NEXUS Book Pro 16 (Natural Titanium)', price: 2499, qty: 1, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80' }
-    ],
-    total: 2499,
-    timeline: [
-      { title: 'Order Verified & Authorized', date: 'Jun 18, 08:00 AM', completed: true },
-      { title: 'Sub-Millimeter Assembly', date: 'Jun 18, 10:15 AM', completed: true },
-      { title: 'Dispatched via FedEx', date: 'Jun 18, 04:00 PM', completed: true },
-      { title: 'Delivered & Signed', date: 'Jun 20, 01:15 PM', completed: true }
-    ]
-  }
-];
+interface OrderSummary {
+  id: string;
+  date: string;
+  status: 'Processing' | 'In Transit' | 'Delivered';
+  carrier: string;
+  trackingCode: string;
+  itemCount: number;
+  total: number;
+  mainItemName: string;
+  mainItemImage: string;
+}
 
 export default function OrdersPage() {
+  const { user } = useAuth();
   const { formatPrice } = useCurrency();
   const { playClick } = useAudioFx();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredOrders = MOCK_ORDERS.filter((o) =>
-    o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.items.some((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const sampleOrders: OrderSummary[] = [
+    {
+      id: 'ATH-892410',
+      date: '2026-07-24',
+      status: 'In Transit',
+      carrier: 'DHL Express Priority',
+      trackingCode: 'DHL-99481204',
+      itemCount: 2,
+      total: 948,
+      mainItemName: 'NEXUS Pulse ANC & Keystone Keyboard',
+      mainItemImage: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: 'ATH-774102',
+      date: '2026-06-18',
+      status: 'Delivered',
+      carrier: 'FedEx Priority Global',
+      trackingCode: 'FDX-88120349',
+      itemCount: 1,
+      total: 1299,
+      mainItemName: 'NEXUS Vision 32" OLED Reference Display',
+      mainItemImage: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80'
+    }
+  ];
+
+  const filteredOrders = sampleOrders.filter(
+    (ord) =>
+      ord.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ord.trackingCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ord.mainItemName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
-    <div className="min-h-screen bg-[#09090b] text-white pt-36 pb-20 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto space-y-10">
-        {/* Header Title Banner */}
-        <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
-            <Package className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Order History Telemetry</span>
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#09090b] text-white pt-28 md:pt-36 pb-20 px-4 md:px-8 flex items-center justify-center">
+        <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-6 max-w-md text-center shadow-2xl">
+          <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center mx-auto shadow-xl">
+            <Lock className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
-            Your Orders
+          <div className="space-y-2">
+            <div className="text-xs font-mono text-zinc-400 uppercase tracking-widest">Authentication Required</div>
+            <h2 className="text-2xl font-bold text-white">Sign In to View Orders</h2>
+            <p className="text-xs text-zinc-400 font-mono leading-relaxed">
+              Please sign in to your NEXUS ID to track active shipments and access logistics telemetry.
+            </p>
+          </div>
+          <Link
+            href="/login?redirect=/orders"
+            onClick={playClick}
+            className="inline-flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white text-black font-bold text-xs uppercase hover:bg-zinc-200 transition-colors cursor-pointer shadow-lg"
+          >
+            <span>Sign In to NEXUS ID</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#09090b] text-white pt-24 md:pt-36 pb-20">
+      <div className="max-w-6xl mx-auto space-y-8 px-4 md:px-8">
+        {/* Page Header */}
+        <div className="space-y-3 border-b border-white/10 pb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-mono uppercase tracking-widest">
+            <Package className="w-3.5 h-3.5 text-zinc-400" />
+            <span>Order History & Telemetry</span>
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
+            Logistics Dashboard
           </h1>
-          <p className="text-zinc-400 text-sm font-light leading-relaxed">
-            Select any order to view full logistics tracking timeline, carrier status, and digital invoice receipt.
+
+          <p className="text-zinc-400 text-xs md:text-sm font-light max-w-xl">
+            Track active shipments, view assembly step telemetry, and inspect digital invoice receipts.
           </p>
         </div>
 
-        {/* Search Input Bar */}
-        <div className="relative max-w-xl">
+        {/* Search Bar */}
+        <div className="relative max-w-md">
           <Search className="w-4 h-4 text-zinc-500 absolute left-4 top-3.5" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search orders by ID (e.g. ATH-892410) or item..."
-            className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/30 font-mono cursor-text shadow-xl"
+            placeholder="Search by Order ID, Tracking Code, or Device Name..."
+            className="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs font-mono focus:border-white/30 focus:outline-none shadow-lg"
           />
         </div>
 
-        {/* Master Orders List Grid */}
-        <div className="space-y-4">
-          <div className="text-xs font-mono text-zinc-400 uppercase tracking-wider font-bold px-1">
-            All Placed Orders ({filteredOrders.length})
-          </div>
-
+        {/* Orders List */}
+        <div className="space-y-6">
           {filteredOrders.length === 0 ? (
-            <div className="p-12 text-center rounded-3xl glass-panel border border-white/10 text-zinc-500 font-mono text-xs">
-              No orders matched your search query.
+            <div className="text-center py-16 rounded-3xl glass-panel border border-white/10 space-y-3">
+              <Package className="w-10 h-10 text-zinc-600 mx-auto" />
+              <div className="text-sm font-bold text-white">No matching orders found</div>
             </div>
           ) : (
             filteredOrders.map((ord) => (
-              <Link
+              <div
                 key={ord.id}
-                href={`/orders/${ord.id}`}
-                onClick={playClick}
-                className="p-6 rounded-3xl glass-card border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-white/30 transition-all cursor-pointer group"
+                className="p-6 rounded-3xl glass-card border border-white/10 space-y-6 hover:border-white/20 transition-all shadow-xl"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg font-bold font-mono text-white group-hover:text-zinc-200 transition-colors">
-                      {ord.id}
-                    </span>
-                    <span
-                      className={`text-[10px] font-mono px-3 py-1 rounded-full border uppercase ${
-                        ord.status === 'In Transit'
-                          ? 'bg-white/10 text-white border-white/30'
-                          : 'bg-zinc-800 text-zinc-300 border-zinc-700'
-                      }`}
-                    >
-                      {ord.status}
-                    </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg font-bold text-white font-mono">{ord.id}</span>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] uppercase font-bold font-mono bg-white/10 text-white border border-white/20">
+                        {ord.status === 'Delivered' ? (
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                        ) : ord.status === 'In Transit' ? (
+                          <Truck className="w-3 h-3 text-blue-400" />
+                        ) : (
+                          <Clock className="w-3 h-3 text-zinc-400" />
+                        )}
+                        {ord.status}
+                      </span>
+                    </div>
+                    <div className="text-xs font-mono text-zinc-400">Order Placed on {ord.date}</div>
                   </div>
 
-                  <div className="text-xs font-mono text-zinc-400">
-                    Placed on <span className="text-zinc-200">{ord.date}</span> • Carrier: <span className="text-zinc-200">{ord.carrier}</span>
-                  </div>
+                  <Link
+                    href={`/orders/${ord.id}`}
+                    onClick={playClick}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black font-bold text-xs uppercase hover:bg-zinc-200 transition-colors shadow-md self-start sm:self-auto cursor-pointer"
+                  >
+                    <span>View Tracking Timeline</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
 
-                  {/* Item Thumbnails Preview */}
-                  <div className="flex items-center gap-2 pt-1">
-                    {ord.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 pr-3">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-10 h-10 rounded-xl object-cover border border-white/10"
-                        />
-                        <span className="text-xs text-zinc-300 font-medium hidden sm:inline">{item.name}</span>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={ord.mainItemImage}
+                      alt={ord.mainItemName}
+                      className="w-16 h-16 rounded-2xl object-cover border border-white/10 bg-zinc-900"
+                    />
+                    <div>
+                      <h4 className="font-bold text-white text-sm md:text-base">{ord.mainItemName}</h4>
+                      <div className="text-xs font-mono text-zinc-400">
+                        {ord.itemCount} item{ord.itemCount > 1 ? 's' : ''} • Carrier: <span className="text-white">{ord.carrier}</span>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center justify-between md:flex-col md:items-end gap-2 shrink-0 border-t md:border-t-0 border-white/10 pt-3 md:pt-0">
-                  <div className="text-xs font-mono text-zinc-500 uppercase">Total Amount</div>
-                  <div className="text-xl font-bold font-mono text-white">{formatPrice(ord.total)}</div>
-                  <div className="flex items-center gap-1 text-xs font-mono text-zinc-300 group-hover:text-white mt-1">
-                    <span>View Tracking Page</span>
-                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="flex items-center justify-between md:justify-end gap-6 font-mono text-xs border-t md:border-t-0 border-white/5 pt-4 md:pt-0">
+                    <div>
+                      <div className="text-zinc-500 uppercase text-[10px]">Tracking Number</div>
+                      <div className="text-white font-bold flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-zinc-400" /> {ord.trackingCode}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-zinc-500 uppercase text-[10px]">Total Paid</div>
+                      <div className="text-lg font-bold text-white">{formatPrice(ord.total)}</div>
+                    </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))
           )}
         </div>

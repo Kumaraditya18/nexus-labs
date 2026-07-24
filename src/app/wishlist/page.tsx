@@ -2,16 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Heart, Share2, Bell, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { Heart, Share2, Bell, ShoppingBag, Trash2, ArrowRight, Lock } from 'lucide-react';
 import { PRODUCTS, Product } from '@/data/products';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useAudioFx } from '@/context/AudioContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const { formatPrice } = useCurrency();
   const { playClick, playSuccess } = useAudioFx();
   const [priceAlerts, setPriceAlerts] = useState<Record<string, boolean>>({});
@@ -31,8 +33,35 @@ export default function WishlistPage() {
     setPriceAlerts((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[#09090b] text-white pt-28 md:pt-36 pb-20 px-4 md:px-8 flex items-center justify-center">
+        <div className="p-8 rounded-3xl glass-panel border border-white/10 space-y-6 max-w-md text-center shadow-2xl">
+          <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center mx-auto shadow-xl">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <div className="text-xs font-mono text-zinc-400 uppercase tracking-widest">Authentication Required</div>
+            <h2 className="text-2xl font-bold text-white">Sign In to View Wishlist</h2>
+            <p className="text-xs text-zinc-400 font-mono leading-relaxed">
+              Please sign in to your NEXUS ID to curate and access your saved ecosystem collection.
+            </p>
+          </div>
+          <Link
+            href="/login?redirect=/wishlist"
+            onClick={playClick}
+            className="inline-flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white text-black font-bold text-xs uppercase hover:bg-zinc-200 transition-colors cursor-pointer shadow-lg"
+          >
+            <span>Sign In to NEXUS ID</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#09090b] text-white pt-36 pb-20">
+    <div className="min-h-screen bg-[#09090b] text-white pt-24 md:pt-36 pb-20">
       <div className="max-w-6xl mx-auto space-y-8 px-4 md:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">

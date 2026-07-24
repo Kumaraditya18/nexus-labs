@@ -24,12 +24,9 @@ import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency, Currency } from '@/context/CurrencyContext';
 import { useAudioFx } from '@/context/AudioContext';
+import AIProductSearchModal from '@/components/ai/AIProductSearchModal';
 
-interface NavbarProps {
-  onOpenSearch?: () => void;
-}
-
-export default function Navbar({ onOpenSearch }: NavbarProps) {
+export default function Navbar() {
   const { cart, setIsCartOpen } = useCart();
   const { wishlist } = useWishlist();
   const { user, logout } = useAuth();
@@ -39,323 +36,332 @@ export default function Navbar({ onOpenSearch }: NavbarProps) {
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const currencies: Currency[] = ['USD', 'EUR', 'GBP', 'JPY'];
   const isAdminUser = user?.role === 'admin' || user?.email?.toLowerCase() === 'kumaraditya1814@gmail.com';
   const totalCartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/90 backdrop-blur-xl border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between">
-        {/* Brand Emblem Logo */}
-        <Link href="/" onClick={playClick} className="flex items-center gap-3 group cursor-pointer">
-          <div className="w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center font-bold text-sm shadow-xl group-hover:scale-105 transition-transform tracking-tighter">
-            NX
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-black tracking-tight text-white uppercase font-sans">
-              NEXUS LABS
-            </span>
-            <span className="text-[9px] font-mono text-zinc-400 tracking-widest uppercase">
-              Quantum Hardware Architecture
-            </span>
-          </div>
-        </Link>
-
-        {/* Primary Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-xs font-mono tracking-wider uppercase text-zinc-400">
-          <Link href="/products" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
-            <Layers className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Ecosystem</span>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#09090b]/90 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 md:h-20 flex items-center justify-between">
+          {/* Brand Emblem Logo */}
+          <Link href="/" onClick={playClick} className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white text-black flex items-center justify-center font-bold text-xs md:text-sm shadow-xl group-hover:scale-105 transition-transform tracking-tighter">
+              NX
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm md:text-base font-black tracking-tight text-white uppercase font-sans">
+                NEXUS LABS
+              </span>
+              <span className="text-[8px] md:text-[9px] font-mono text-zinc-400 tracking-widest uppercase hidden sm:block">
+                Quantum Hardware Architecture
+              </span>
+            </div>
           </Link>
 
-          <Link href="/workspace-builder" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
-            <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
-            <span>AI Workspace</span>
-          </Link>
-
-          <Link href="/compare" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
-            <Sliders className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Compare</span>
-          </Link>
-
-          {/* Admin Dashboard Link for Primary Admin */}
-          {isAdminUser && (
-            <Link href="/admin" onClick={playClick} className="px-3.5 py-1.5 rounded-full bg-white text-black font-bold flex items-center gap-1.5 cursor-pointer shadow-md">
-              <BarChart2 className="w-3.5 h-3.5 text-black" />
-              <span>Admin Center</span>
+          {/* Primary Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-mono tracking-wider uppercase text-zinc-400">
+            <Link href="/products" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+              <Layers className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Ecosystem</span>
             </Link>
-          )}
-        </nav>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
-          {/* Natural Language Search Trigger */}
-          <button
-            onClick={() => {
-              playClick();
-              onOpenSearch?.();
-            }}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-zinc-400 hover:text-white text-xs font-mono transition-all cursor-pointer"
-            title="Search Products with AI (Cmd + K)"
-          >
-            <Search className="w-3.5 h-3.5 text-zinc-400" />
-            <span className="hidden sm:inline">Search...</span>
-          </button>
+            <Link href="/workspace-builder" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+              <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+              <span>AI Workspace</span>
+            </Link>
 
-          {/* Currency Switcher */}
-          <div className="relative hidden sm:block">
+            <Link href="/compare" onClick={playClick} className="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+              <Sliders className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Compare</span>
+            </Link>
+
+            {/* Admin Dashboard Link for Primary Admin */}
+            {isAdminUser && (
+              <Link href="/admin" onClick={playClick} className="px-3.5 py-1.5 rounded-full bg-white text-black font-bold flex items-center gap-1.5 cursor-pointer shadow-md">
+                <BarChart2 className="w-3.5 h-3.5 text-black" />
+                <span>Admin Center</span>
+              </Link>
+            )}
+          </nav>
+
+          {/* Action Controls */}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Natural Language Search Trigger */}
             <button
-              onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
-              className="flex items-center gap-1 px-3 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-zinc-400 hover:text-white transition-all cursor-pointer"
+              onClick={() => {
+                playClick();
+                setIsSearchOpen(true);
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 md:px-3.5 md:py-2 rounded-full bg-white/5 border border-white/10 hover:border-white/20 text-zinc-400 hover:text-white text-xs font-mono transition-all cursor-pointer"
+              title="Search Products with AI (Cmd + K)"
             >
-              <Globe className="w-3.5 h-3.5 text-zinc-400" />
-              <span>{currency}</span>
+              <Search className="w-3.5 h-3.5 text-zinc-400" />
+              <span className="hidden sm:inline">Search...</span>
             </button>
-            <AnimatePresence>
-              {currencyDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-24 py-1 rounded-xl glass-panel border border-white/10 shadow-2xl z-50 overflow-hidden"
-                >
-                  {currencies.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => {
-                        setCurrency(c);
-                        setCurrencyDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-1.5 text-left text-xs font-mono transition-colors cursor-pointer ${
-                        currency === c ? 'text-white bg-white/10 font-bold' : 'text-zinc-400 hover:bg-white/5'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
-          {/* Saved Wishlist Link */}
-          <Link
-            href="/wishlist"
-            onClick={playClick}
-            className="p-2.5 rounded-full glass-panel border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition-colors relative cursor-pointer"
-            title="Wishlist"
-          >
-            <Heart className="w-4 h-4" />
-            {wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black font-mono text-[9px] font-bold flex items-center justify-center shadow-md">
-                {wishlist.length}
-              </span>
-            )}
-          </Link>
-
-          {/* Cart Drawer Trigger */}
-          <button
-            onClick={() => {
-              playClick();
-              setIsCartOpen(true);
-            }}
-            className="p-2.5 rounded-full bg-white text-black font-bold hover:bg-zinc-200 transition-colors relative cursor-pointer shadow-lg"
-            title="View Cart"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            {totalCartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-black text-white font-mono text-[9px] font-bold flex items-center justify-center">
-                {totalCartCount}
-              </span>
-            )}
-          </button>
-
-          {/* User Account / Admin Account Dropdown */}
-          {user ? (
-            <div className="relative hidden sm:block">
+            {/* Currency Switcher (Desktop Only) */}
+            <div className="relative hidden md:block">
               <button
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border border-white/10 hover:border-white/30 transition-all cursor-pointer"
+                onClick={() => setCurrencyDropdownOpen(!currencyDropdownOpen)}
+                className="flex items-center gap-1 px-3 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-zinc-400 hover:text-white transition-all cursor-pointer"
               >
-                <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover border border-white/20" />
-                <span className="text-xs font-mono text-white font-bold">{user.name.split(' ')[0]}</span>
+                <Globe className="w-3.5 h-3.5 text-zinc-400" />
+                <span>{currency}</span>
               </button>
-
               <AnimatePresence>
-                {userDropdownOpen && (
+                {currencyDropdownOpen && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 py-2 rounded-2xl glass-panel border border-white/10 shadow-2xl z-50 space-y-1 font-mono text-xs overflow-hidden"
+                    className="absolute right-0 mt-2 w-24 py-1 rounded-xl glass-panel border border-white/10 shadow-2xl z-50 overflow-hidden"
                   >
-                    <div className="px-4 py-2 border-b border-white/10">
-                      <div className="font-bold text-white truncate">{user.name}</div>
-                      <div className="text-[10px] text-zinc-400 truncate">{user.email}</div>
-                    </div>
-
-                    <Link
-                      href="/account"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                    >
-                      <User className="w-3.5 h-3.5 text-zinc-400" />
-                      <span>Account Profile</span>
-                    </Link>
-
-                    <Link
-                      href="/orders"
-                      onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                    >
-                      <Package className="w-3.5 h-3.5 text-zinc-400" />
-                      <span>Track Orders</span>
-                    </Link>
-
-                    {isAdminUser && (
-                      <Link
-                        href="/admin"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-white font-bold hover:bg-white/10 transition-colors cursor-pointer"
+                    {currencies.map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => {
+                          setCurrency(c);
+                          setCurrencyDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-1.5 text-left text-xs font-mono transition-colors cursor-pointer ${
+                          currency === c ? 'text-white bg-white/10 font-bold' : 'text-zinc-400 hover:bg-white/5'
+                        }`}
                       >
-                        <BarChart2 className="w-3.5 h-3.5 text-white" />
-                        <span>Admin Dashboard</span>
-                      </Link>
-                    )}
-
-                    <button
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        logout();
-                      }}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer border-t border-white/10"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Sign Out</span>
-                    </button>
+                        {c}
+                      </button>
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          ) : (
+
+            {/* Saved Wishlist Link */}
             <Link
-              href="/login"
+              href="/wishlist"
               onClick={playClick}
-              className="hidden sm:inline-flex px-4 py-2 rounded-full glass-panel border border-white/10 hover:border-white/30 text-xs font-mono text-white transition-all cursor-pointer"
+              className="p-2 md:p-2.5 rounded-full glass-panel border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white transition-colors relative cursor-pointer"
+              title="Wishlist"
             >
-              Sign In
+              <Heart className="w-4 h-4" />
+              {wishlist.length > 0 && user && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black font-mono text-[9px] font-bold flex items-center justify-center shadow-md">
+                  {wishlist.length}
+                </span>
+              )}
             </Link>
-          )}
 
-          {/* MOBILE HAMBURGER TOGGLE BUTTON */}
-          <button
-            onClick={() => {
-              playClick();
-              setMobileMenuOpen(!mobileMenuOpen);
-            }}
-            className="p-2.5 rounded-full lg:hidden glass-panel border border-white/10 text-white cursor-pointer"
-            title="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            {/* Cart Drawer Trigger */}
+            <button
+              onClick={() => {
+                playClick();
+                setIsCartOpen(true);
+              }}
+              className="p-2 md:p-2.5 rounded-full bg-white text-black font-bold hover:bg-zinc-200 transition-colors relative cursor-pointer shadow-lg"
+              title="View Cart"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              {totalCartCount > 0 && user && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-black text-white font-mono text-[9px] font-bold flex items-center justify-center">
+                  {totalCartCount}
+                </span>
+              )}
+            </button>
+
+            {/* User Account / Admin Account Dropdown */}
+            {user ? (
+              <div className="relative hidden md:block">
+                <button
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border border-white/10 hover:border-white/30 transition-all cursor-pointer"
+                >
+                  <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full object-cover border border-white/20" />
+                  <span className="text-xs font-mono text-white font-bold">{user.name.split(' ')[0]}</span>
+                </button>
+
+                <AnimatePresence>
+                  {userDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 mt-2 w-48 py-2 rounded-2xl glass-panel border border-white/10 shadow-2xl z-50 space-y-1 font-mono text-xs overflow-hidden"
+                    >
+                      <div className="px-4 py-2 border-b border-white/10">
+                        <div className="font-bold text-white truncate">{user.name}</div>
+                        <div className="text-[10px] text-zinc-400 truncate">{user.email}</div>
+                      </div>
+
+                      <Link
+                        href="/account"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                      >
+                        <User className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>Account Profile</span>
+                      </Link>
+
+                      <Link
+                        href="/orders"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                      >
+                        <Package className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>Track Orders</span>
+                      </Link>
+
+                      {isAdminUser && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-white font-bold hover:bg-white/10 transition-colors cursor-pointer"
+                        >
+                          <BarChart2 className="w-3.5 h-3.5 text-white" />
+                          <span>Admin Dashboard</span>
+                        </Link>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer border-t border-white/10"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={playClick}
+                className="hidden md:inline-flex px-4 py-2 rounded-full glass-panel border border-white/10 hover:border-white/30 text-xs font-mono text-white transition-all cursor-pointer"
+              >
+                Sign In
+              </Link>
+            )}
+
+            {/* MOBILE HAMBURGER TOGGLE BUTTON */}
+            <button
+              onClick={() => {
+                playClick();
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
+              className="p-2.5 rounded-full lg:hidden glass-panel border border-white/10 text-white cursor-pointer"
+              title="Toggle Navigation Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* MOBILE SLIDE-DOWN DRAWER MENU */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#09090b] border-b border-white/10 px-6 py-6 space-y-4 font-mono text-xs overflow-hidden"
-          >
-            <div className="space-y-2">
-              <Link
-                href="/products"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
-              >
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-zinc-400" />
-                  <span>Ecosystem Catalog</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-zinc-500" />
-              </Link>
-
-              <Link
-                href="/workspace-builder"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
-              >
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-zinc-400" />
-                  <span>AI Workspace Builder</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-zinc-500" />
-              </Link>
-
-              <Link
-                href="/compare"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
-              >
-                <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-zinc-400" />
-                  <span>Spec Comparison Engine</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-zinc-500" />
-              </Link>
-
-              {isAdminUser && (
+        {/* MOBILE SLIDE-DOWN DRAWER MENU */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-[#09090b] border-b border-white/10 px-6 py-6 space-y-4 font-mono text-xs overflow-hidden"
+            >
+              <div className="space-y-2">
                 <Link
-                  href="/admin"
+                  href="/products"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl bg-white text-black font-bold"
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
                 >
                   <div className="flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-black" />
-                    <span>Admin Command Center</span>
+                    <Layers className="w-4 h-4 text-zinc-400" />
+                    <span>Ecosystem Catalog</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-black" />
+                  <ChevronRight className="w-4 h-4 text-zinc-500" />
                 </Link>
-              )}
-            </div>
 
-            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
-              {user ? (
-                <div className="flex items-center justify-between w-full">
+                <Link
+                  href="/workspace-builder"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
+                >
                   <div className="flex items-center gap-2">
-                    <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover border border-white/20" />
-                    <div>
-                      <div className="font-bold text-white">{user.name}</div>
-                      <div className="text-[10px] text-zinc-400">{user.email}</div>
-                    </div>
+                    <Sparkles className="w-4 h-4 text-zinc-400" />
+                    <span>AI Workspace Builder</span>
                   </div>
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      logout();
-                    }}
-                    className="px-3 py-1.5 rounded-xl border border-red-500/30 text-red-400 text-[10px] uppercase font-mono"
+                  <ChevronRight className="w-4 h-4 text-zinc-500" />
+                </Link>
+
+                <Link
+                  href="/compare"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/10 text-white font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-zinc-400" />
+                    <span>Spec Comparison Engine</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-500" />
+                </Link>
+
+                {isAdminUser && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-2xl bg-white text-black font-bold"
                   >
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-3 rounded-xl bg-white text-black text-center font-bold uppercase"
-                >
-                  Sign In to NEXUS ID
-                </Link>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+                    <div className="flex items-center gap-2">
+                      <BarChart2 className="w-4 h-4 text-black" />
+                      <span>Admin Command Center</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-black" />
+                  </Link>
+                )}
+              </div>
+
+              <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+                {user ? (
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full object-cover border border-white/20" />
+                      <div>
+                        <div className="font-bold text-white">{user.name}</div>
+                        <div className="text-[10px] text-zinc-400">{user.email}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        logout();
+                      }}
+                      className="px-3 py-1.5 rounded-xl border border-red-500/30 text-red-400 text-[10px] uppercase font-mono"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full py-3 rounded-xl bg-white text-black text-center font-bold uppercase"
+                  >
+                    Sign In to NEXUS ID
+                  </Link>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* AI SPOTLIGHT SEARCH MODAL */}
+      <AIProductSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
+    </>
   );
 }

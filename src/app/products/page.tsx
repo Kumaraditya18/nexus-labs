@@ -27,7 +27,7 @@ export default function ProductsPage() {
       : PRODUCTS.filter((p) => p.category === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-white pt-36">
+    <div className="min-h-screen bg-[#09090b] text-white pt-24 md:pt-36">
       <div className="max-w-7xl mx-auto space-y-12 px-4 md:px-8 pb-24">
         {/* Page Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
