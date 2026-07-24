@@ -15,7 +15,7 @@ export interface UserProfile {
 
 interface AuthContextType {
   user: UserProfile | null;
-  login: (email: string, name?: string) => void;
+  login: (email: string, name?: string, serverRole?: string) => void;
   logout: () => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
@@ -28,7 +28,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('nexus_user');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          // Force primary owner kumaraditya1814@gmail.com to admin role
+          if (parsed?.email?.toLowerCase() === 'kumaraditya1814@gmail.com') {
+            parsed.role = 'admin';
+            parsed.tier = 'NEXUS Black Member';
+          }
+          return parsed;
+        }
       } catch {
         // ignore
       }
@@ -38,18 +46,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-  const login = (email: string, name = 'NEXUS Member') => {
-    const isAdmin = email.includes('admin') || email.includes('amber.vance');
+  const login = (email: string, name = 'NEXUS Member', serverRole?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com' || serverRole === 'admin';
+
     const newUser: UserProfile = {
       id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
-      name,
-      email,
+      name: name || (cleanEmail === 'kumaraditya1814@gmail.com' ? 'Kumar Aditya' : cleanEmail.split('@')[0]),
+      email: cleanEmail,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
       tier: isAdmin ? 'NEXUS Black Member' : 'Pro',
       role: isAdmin ? 'admin' : 'user',
       passkeysEnabled: true,
       memberSince: '2026'
     };
+
     setUser(newUser);
     if (typeof window !== 'undefined') {
       localStorage.setItem('nexus_user', JSON.stringify(newUser));

@@ -11,7 +11,6 @@ import { useAudioFx } from '@/context/AudioContext';
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTarget = searchParams.get('redirect') || '/account';
 
   const { login } = useAuth();
   const { playClick, playSuccess } = useAudioFx();
@@ -31,32 +30,38 @@ function LoginContent() {
     setIsAuthenticating(true);
     setErrorMessage('');
 
+    const cleanEmail = email.trim().toLowerCase();
+    const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com';
+    const targetRedirect = searchParams.get('redirect') || (isAdmin ? '/admin' : '/account');
+
     try {
       const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name })
+        body: JSON.stringify({ email: cleanEmail, password, name })
       });
 
       const data = await res.json();
       if (data.success) {
-        login(email, data.user.name || name || email.split('@')[0]);
+        const userRole = data.user.role || (isAdmin ? 'admin' : 'user');
+        login(cleanEmail, data.user.name || name || cleanEmail.split('@')[0], userRole);
         playSuccess();
         setAuthSuccess(true);
         setTimeout(() => {
-          router.push(redirectTarget);
-        }, 1200);
+          router.push(targetRedirect);
+        }, 1000);
       } else {
         setErrorMessage(data.error || 'Authentication failed. Please check credentials.');
       }
     } catch {
-      login(email, name || email.split('@')[0]);
+      const fallbackRole = isAdmin ? 'admin' : 'user';
+      login(cleanEmail, name || (isAdmin ? 'Kumar Aditya' : cleanEmail.split('@')[0]), fallbackRole);
       playSuccess();
       setAuthSuccess(true);
       setTimeout(() => {
-        router.push(redirectTarget);
-      }, 1200);
+        router.push(targetRedirect);
+      }, 1000);
     } finally {
       setIsAuthenticating(false);
     }
@@ -120,7 +125,7 @@ function LoginContent() {
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div className="text-base font-bold text-white">Authenticated Successfully</div>
-              <p className="text-xs text-zinc-400 font-mono">Redirecting to target route...</p>
+              <p className="text-xs text-zinc-400 font-mono">Redirecting to executive dashboard...</p>
             </motion.div>
           ) : (
             <motion.div
@@ -152,7 +157,7 @@ function LoginContent() {
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Amber Vance"
+                        placeholder="Kumar Aditya"
                         className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs font-mono focus:border-white/30 focus:outline-none"
                       />
                     </div>
@@ -168,7 +173,7 @@ function LoginContent() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="amber.vance@nexuslabs.tech"
+                      placeholder="kumaraditya1814@gmail.com"
                       className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 text-xs font-mono focus:border-white/30 focus:outline-none"
                     />
                   </div>
