@@ -12,6 +12,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (password.length < 6) {
+      return NextResponse.json(
+        { success: false, error: 'Password must be at least 6 characters long' },
+        { status: 400 }
+      );
+    }
+
     await initDb();
     const cleanEmail = email.trim().toLowerCase();
     const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com';
@@ -26,7 +33,7 @@ export async function POST(request: Request) {
         await client.query(
           `INSERT INTO users (id, email, name, password_hash, role, tier)
            VALUES ($1, $2, $3, $4, $5, $6)
-           ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name`,
+           ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, name = EXCLUDED.name`,
           [userId, cleanEmail, userName, password, userRole, userTier]
         );
       } finally {

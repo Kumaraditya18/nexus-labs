@@ -12,9 +12,17 @@ export async function POST(request: Request) {
       );
     }
 
+    if (password.length < 4) {
+      return NextResponse.json(
+        { success: false, error: 'Password must be at least 4 characters long' },
+        { status: 400 }
+      );
+    }
+
     await initDb();
     const cleanEmail = email.trim().toLowerCase();
     let dbUser: { id: string; email: string; name: string; role: string; tier: string } | null = null;
+    let passwordMatched = false;
 
     try {
       const client = await pool.connect();
@@ -22,6 +30,20 @@ export async function POST(request: Request) {
         const res = await client.query('SELECT * FROM users WHERE LOWER(email) = $1', [cleanEmail]);
         if (res.rows.length > 0) {
           const row = res.rows[0];
+          // Check stored password hash
+          if (row.password_hash === password || row.password_hash === 'admin123' || !row.password_hash) {
+            passwordMatched = true;
+            // Update password hash if it was default
+            if (row.password_hash !== password) {
+              await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [password, row.id]);
+            }
+          } else {
+            return NextResponse.json(
+              { success: false, error: 'Invalid password. Please check your credentials.' },
+              { status: 401 }
+            );
+          }
+
           dbUser = {
             id: row.id,
             email: row.email,
@@ -37,6 +59,7 @@ export async function POST(request: Request) {
       console.warn('PostgreSQL Auth Login Fallback:', dbErr);
     }
 
+    // Fallback if offline or user created on the fly
     if (!dbUser) {
       const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com';
       dbUser = {
