@@ -3,9 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { useCurrency } from '@/context/CurrencyContext';
 import { useAudioFx } from '@/context/AudioContext';
-import { User, LogOut, Package, ShieldCheck, ArrowRight, Key } from 'lucide-react';
+import { LogOut, Package, ShieldCheck, ArrowRight, Lock } from 'lucide-react';
 
 export default function AccountPage() {
   const { user, logout } = useAuth();
@@ -18,7 +17,7 @@ export default function AccountPage() {
           <ShieldCheck className="w-12 h-12 text-zinc-500 mx-auto" />
           <h2 className="text-2xl font-bold text-white">Authentication Required</h2>
           <p className="text-xs text-zinc-400 font-mono">
-            Please sign in to access your NEXUS Passkey profile and active orders.
+            Please sign in to access your NEXUS profile and active orders.
           </p>
           <Link
             href="/login"
@@ -48,7 +47,7 @@ export default function AccountPage() {
                 </span>
               </div>
               <div className="text-xs font-mono text-zinc-400">{user.email}</div>
-              <div className="text-[10px] font-mono text-zinc-500">Member Since {user.memberSince} • Passkeys Active</div>
+              <div className="text-[10px] font-mono text-zinc-500">Member Since {user.memberSince} • Encrypted Session Active</div>
             </div>
           </div>
 
@@ -97,11 +96,11 @@ export default function AccountPage() {
 
           <div className="p-6 rounded-3xl glass-card border border-white/10 space-y-3">
             <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
-              <Key className="w-5 h-5" />
+              <Lock className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-bold text-white">Passkey Security Telemetry</h3>
+            <h3 className="text-lg font-bold text-white">Account Security Telemetry</h3>
             <p className="text-xs text-zinc-400 font-mono">
-              FIDO2 Touch ID & WebAuthn biometric security active for your NEXUS ID.
+              256-Bit Encrypted PostgreSQL password credentials active for your NEXUS ID.
             </p>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Fingerprint, Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User } from 'lucide-react';
+import { X, Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useAudioFx } from '@/context/AudioContext';
 
@@ -17,44 +17,6 @@ export default function AuthModal() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authSuccess, setAuthSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const handlePasskeyAuth = async () => {
-    playClick();
-    setIsAuthenticating(true);
-    setErrorMessage('');
-
-    const targetEmail = email || 'amber.vance@nexuslabs.tech';
-    const targetPassword = password || 'passkey123';
-
-    try {
-      const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: targetEmail, password: targetPassword, name })
-      });
-      const data = await res.json();
-      if (data.success) {
-        login(targetEmail, data.user.name || 'Amber Vance');
-        playSuccess();
-        setAuthSuccess(true);
-        setTimeout(() => {
-          setIsAuthModalOpen(false);
-          setAuthSuccess(false);
-        }, 1200);
-      }
-    } catch {
-      login(targetEmail, 'Amber Vance');
-      playSuccess();
-      setAuthSuccess(true);
-      setTimeout(() => {
-        setIsAuthModalOpen(false);
-        setAuthSuccess(false);
-      }, 1200);
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +85,7 @@ export default function AuthModal() {
 
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-[10px] font-mono uppercase tracking-widest">
-                <Fingerprint className="w-3.5 h-3.5 text-zinc-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
                 <span>NEXUS ID Security</span>
               </div>
               <h2 className="text-2xl font-bold text-white tracking-tight">
@@ -211,16 +173,6 @@ export default function AuthModal() {
                   >
                     <span>{isAuthenticating ? 'Authenticating...' : mode === 'login' ? 'Sign In' : 'Register NEXUS ID'}</span>
                     <ArrowRight className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handlePasskeyAuth}
-                    disabled={isAuthenticating}
-                    className="w-full py-2.5 rounded-xl glass-panel border border-white/10 text-xs font-mono text-zinc-300 hover:text-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Fingerprint className="w-4 h-4" />
-                    <span>Quick Biometric Passkey</span>
                   </button>
                 </form>
               )}

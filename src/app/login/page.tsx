@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Fingerprint, Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useAudioFx } from '@/context/AudioContext';
 
@@ -52,42 +52,6 @@ function LoginContent() {
       }
     } catch {
       login(email, name || email.split('@')[0]);
-      playSuccess();
-      setAuthSuccess(true);
-      setTimeout(() => {
-        router.push(redirectTarget);
-      }, 1200);
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  const handlePasskeyAuth = async () => {
-    playClick();
-    setIsAuthenticating(true);
-    setErrorMessage('');
-
-    const targetEmail = email || 'amber.vance@nexuslabs.tech';
-    const targetPassword = password || 'passkey123';
-
-    try {
-      const endpoint = mode === 'signup' ? '/api/auth/signup' : '/api/auth/login';
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: targetEmail, password: targetPassword, name })
-      });
-      const data = await res.json();
-      if (data.success) {
-        login(targetEmail, data.user.name || 'Amber Vance');
-        playSuccess();
-        setAuthSuccess(true);
-        setTimeout(() => {
-          router.push(redirectTarget);
-        }, 1200);
-      }
-    } catch {
-      login(targetEmail, 'Amber Vance');
       playSuccess();
       setAuthSuccess(true);
       setTimeout(() => {
@@ -238,22 +202,6 @@ function LoginContent() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
-
-              <div className="flex items-center gap-4 text-zinc-600 font-mono text-[10px] uppercase">
-                <div className="flex-1 h-px bg-white/10" />
-                <span>or biometric verification</span>
-                <div className="flex-1 h-px bg-white/10" />
-              </div>
-
-              <button
-                type="button"
-                onClick={handlePasskeyAuth}
-                disabled={isAuthenticating}
-                className="w-full py-3 rounded-xl glass-panel border border-white/10 hover:border-white/30 text-xs font-mono text-zinc-300 hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Fingerprint className="w-4 h-4" />
-                <span>Quick Passkey / Touch ID Authentication</span>
-              </button>
 
               <div className="pt-2 text-center text-[10px] font-mono text-zinc-500 flex items-center justify-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
