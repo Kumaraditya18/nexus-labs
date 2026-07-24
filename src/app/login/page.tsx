@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, CheckCircle2, User, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useAudioFx } from '@/context/AudioContext';
 
@@ -43,7 +43,7 @@ function LoginContent() {
       });
 
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         const userRole = data.user.role || (isAdmin ? 'admin' : 'user');
         login(cleanEmail, data.user.name || name || cleanEmail.split('@')[0], userRole);
         playSuccess();
@@ -55,13 +55,7 @@ function LoginContent() {
         setErrorMessage(data.error || 'Authentication failed. Please check credentials.');
       }
     } catch {
-      const fallbackRole = isAdmin ? 'admin' : 'user';
-      login(cleanEmail, name || (isAdmin ? 'Kumar Aditya' : cleanEmail.split('@')[0]), fallbackRole);
-      playSuccess();
-      setAuthSuccess(true);
-      setTimeout(() => {
-        router.push(targetRedirect);
-      }, 1000);
+      setErrorMessage('Network connection error. Unable to reach authentication server.');
     } finally {
       setIsAuthenticating(false);
     }
@@ -125,7 +119,7 @@ function LoginContent() {
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div className="text-base font-bold text-white">Authenticated Successfully</div>
-              <p className="text-xs text-zinc-400 font-mono">Redirecting to executive dashboard...</p>
+              <p className="text-xs text-zinc-400 font-mono">Redirecting to target route...</p>
             </motion.div>
           ) : (
             <motion.div
@@ -195,7 +189,10 @@ function LoginContent() {
                 </div>
 
                 {errorMessage && (
-                  <p className="text-xs text-red-400 font-mono text-center">{errorMessage}</p>
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
                 )}
 
                 <button

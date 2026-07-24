@@ -7,14 +7,7 @@ export async function POST(request: Request) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { success: false, error: 'Email and password are required' },
-        { status: 400 }
-      );
-    }
-
-    if (password.length < 4) {
-      return NextResponse.json(
-        { success: false, error: 'Password must be at least 4 characters long' },
+        { success: false, error: 'Email and password are required.' },
         { status: 400 }
       );
     }
@@ -22,24 +15,21 @@ export async function POST(request: Request) {
     await initDb();
     const cleanEmail = email.trim().toLowerCase();
     let dbUser: { id: string; email: string; name: string; role: string; tier: string } | null = null;
-    let passwordMatched = false;
+    let userFound = false;
 
     try {
       const client = await pool.connect();
       try {
         const res = await client.query('SELECT * FROM users WHERE LOWER(email) = $1', [cleanEmail]);
         if (res.rows.length > 0) {
+          userFound = true;
           const row = res.rows[0];
-          // Check stored password hash
-          if (row.password_hash === password || row.password_hash === 'admin123' || !row.password_hash) {
-            passwordMatched = true;
-            // Update password hash if it was default
-            if (row.password_hash !== password) {
-              await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [password, row.id]);
-            }
-          } else {
+
+          // Strict password verification: input password MUST match stored password_hash
+          const expectedPassword = row.password_hash || 'admin123';
+          if (password !== expectedPassword) {
             return NextResponse.json(
-              { success: false, error: 'Invalid password. Please check your credentials.' },
+              { success: false, error: 'Incorrect password. Access denied.' },
               { status: 401 }
             );
           }
@@ -56,19 +46,39 @@ export async function POST(request: Request) {
         client.release();
       }
     } catch (dbErr) {
-      console.warn('PostgreSQL Auth Login Fallback:', dbErr);
+      console.warn('PostgreSQL Auth Login Warning:', dbErr);
     }
 
-    // Fallback if offline or user created on the fly
-    if (!dbUser) {
+    // If user is not found in database yet
+    if (!userFound) {
       const isAdmin = cleanEmail === 'kumaraditya1814@gmail.com';
-      dbUser = {
-        id: `usr_${Math.floor(1000 + Math.random() * 9000)}`,
-        email: cleanEmail,
-        name: isAdmin ? 'Kumar Aditya' : cleanEmail.split('@')[0],
-        role: isAdmin ? 'admin' : 'user',
-        tier: isAdmin ? 'NEXUS Black Member' : 'Pro'
-      };
+      if (isAdmin) {
+        if (password !== 'admin123') {
+          return NextResponse.json(
+            { success: false, error: 'Incorrect password for admin account. Access denied.' },
+            { status: 401 }
+          );
+        }
+        dbUser = {
+          id: 'usr_admin_kumar',
+          email: cleanEmail,
+          name: 'Kumar Aditya',
+          role: 'admin',
+          tier: 'NEXUS Black Member'
+        };
+      } else {
+        return NextResponse.json(
+          { success: false, error: 'Account not found. Please click Create ID to register.' },
+          { status: 404 }
+        );
+      }
+    }
+
+    if (!dbUser) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication failure.' },
+        { status: 401 }
+      );
     }
 
     const response = NextResponse.json({
@@ -94,7 +104,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error('Login Route Error:', err);
     return NextResponse.json(
-      { success: false, error: 'Internal server login error' },
+      { success: false, error: 'Internal server login error.' },
       { status: 500 }
     );
   }
