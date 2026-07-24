@@ -55,7 +55,7 @@ export default function HomePage() {
         initial={{ opacity: 0, scale: 1.05 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="pt-16 md:pt-20"
+        className="pt-0"
       >
         <ScrollStorytelling />
       </motion.div>

@@ -62,8 +62,8 @@ export default function ScrollStorytelling() {
 
   return (
     <section ref={containerRef} className="relative h-[450vh] bg-[#09090b]">
-      {/* Sticky Viewport Stage Container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 pt-12 md:pt-16">
+      {/* Sticky Viewport Stage Container with Minimal Top Padding */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 pt-8 md:pt-16">
         
         {/* Dynamic Background Glow Layer */}
         <motion.div
@@ -78,7 +78,7 @@ export default function ScrollStorytelling() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.8 }}
-            className="w-full max-w-5xl mx-auto text-center space-y-4 sm:space-y-6 z-20"
+            className="w-full max-w-5xl mx-auto text-center space-y-3 sm:space-y-6 z-20"
           >
             <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-white tracking-tighter uppercase">
               NEXUS <span className="text-gradient-subtle">Pulse ANC</span>
